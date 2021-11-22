@@ -1,13 +1,12 @@
-#verbose = args.get('-v',False) or args.get('--verbose',False) or True    
-#                                                              ^^^^^   we can write this for make verbose allways active
-#
+#develop in python 3.10
 #import modules
-from typing import Literal
 try:
+    from typing import Literal
     import sys
     import os
 except:
     print('Impossible to import python library modules')
+    raise('Try to restart.')
 try:
     from googlesearch import search
     import requests
@@ -15,7 +14,6 @@ try:
     import bs4
 except:
     print('External module import error. For install all the modules run: ')
-
 
 #function that should install all required modules
 def installModules():
@@ -40,19 +38,26 @@ def googleSearch()->Literal["list of urls"]:
     domain = domain[1:] if domain.startswith('.') else domain
     to_search=to_search.replace(',.-/:&',' ')  
     pause=2.0 if len(to_search.split(' '))<10 else 1.0#only use to optimice 
-
-    return('\n'.join(search(query=to_search, tld=domain, lang=language, num=int(openNum), start=0, stop=int(openNum), pause=pause)))
+    return('|'.join(search(query=to_search, tld=domain, lang=language, num=int(openNum), start=0, stop=int(openNum), pause=pause)).split('|'))
 #make a requests search
 def normalSearch():  
     print('Use -u g, this function isnt already writen')
 #open files in browser
-def openInBrowser(filename):
+def openInBrowser(filename,n=False):
+    global verbose
+    if verbose:print('[>] opening file...'if not n else '[>] opening files...',end='')
     s = 'file:///'
     path = os.getcwd()
-    print(path)
-    a = s+(path+'/'+filename).replace('\\','/')
-    print(a)
-    webbrowser.open(a)
+    if n:
+        filename,filenameext=filename.split('.')
+        for l in range(n):
+            a = s+(f'{path}/{filename}({l+1}).{filenameext}').replace('\\','/')
+            webbrowser.open(a)
+    else:
+        a = s+(path+'/'+filename).replace('\\','/')
+        webbrowser.open(a)
+    if verbose:print('success')
+
 #prints info (languages)
 def printLanguages():
     print(
@@ -130,44 +135,48 @@ def help():
 
                                                                                                                         by Hugo Coto Flórez
 
-        Usage:
-                (searcher dir)...\\ python3(linux)/py(windows) searcher.py [options]
+        Use:
+            (searcher dir)...\\ python3(linux)/py(windows) searcher.py [options] [url] [get output]
 
         options:
             short       large                     use to:
 
             -h          --help                      get this info:
+            -v T/F      --verbose True/False/1/0    decide if prints info in console (it should be in first position)
+            _           --project                   open in browser searcher.py github repository and prints the link in consola
 
-            -w T/F      --verbose True/False/1/0    decide if prints info in console (it should be in first position)
-
-            -u          --url (url)                 especifique url for the search
+        url:
+            -u          --url (url)                 especifique url for the search (DISABLED for now...) 
             -u g        --url google                search via google
 
             -q          --query(s)                  word or words separeted by "," , "+" or "-" [never space!] (default:ask)
-            -d          --domain                    domain to search (default .com) 
-
-            -r          --return (way)              how to get the information 
-            -r h        --return html               returns a html copy of the file
-            -r l        --return link               returns the links of pages that contains the searched
-            
-            -s          --save (filename)           save the returned in a file. You can save it into a .txt or .html if use -r h
-
-            -p          --print                     prints the returned in consola (default True if verbose is True)
-             
-            -o (n)      --open (number)             open the specified number of links (default 5 in google link search)
-            -b (T/1)    --browser (True/1)          open the links in browser
-            -v          --view                      open that is saved into a file with the browser (important -o 1 for .html files)(need -s)
+            -e          --extension                 extension to search, without "." (".\ searcher.py --extensions" -> see all extensoions) (default .com) 
 
             -l          --languages (language)      change the search language (".\ searcher.py --languages" -> see all languages) (default english)
 
+        get output: 
+            -r h        --return html               returns a html copy of the file
+            -r l        --return link               returns the links of pages that contains the searched
             
+            -s          --save (filename)           save the returned in a file. You can save it into a .txt (or .html if use -r h)
+            -sm        --savemultifile (filename)   save each result in a diferent file, whose name is (miltifile)(1-...).extension.It is useful for html search 
+            
+
+            -p          --print (bool)              prints the returned in consola
+             
+            -n (n)      --numopen (number)          open the specified number of links (default 5 in google link search)
+            -b (T/1)    --browser (True/1)          open the links in browser
+            -o          --open                      open that is saved into a file with the browser (need -s or -sm)
+
+            
+   
         Useful Examples:
 
-            Google normal search, open first 10 results in browser and save the links into a file
-                python3/py searcher.py -u g --query python-language --open 10 -r link -s searchlinks.txt -b 1
+            Google link search, open first 10 results in browser and save the links into a file
+                python3/py searcher.py -u g --query python-language -n 10 -r link -s searchlinks.txt -b 1
 
             Copy the HTML who is in the first link page into a file and open it
-                python3/py searcher.py -u g --query python-language --open 1 -r html -s searchlinks.html 
+                python3/py searcher.py -u g --query hugo-coto -n 3 -r html -sm found_htmls.html -o 1
                                             
 
             
@@ -177,14 +186,18 @@ def help():
     ''')
 #main isnt loop
 def main():
+    global verbose
     args = separateArgs(sys.argv[1:] if len(sys.argv)>2 else sys.argv[1:]+[''])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
-                                                                               # el ultimo else evita un index error al correr searcher.py con una sola opcion sin argumentos
-    if args=={}:help() #si no hay argumentos corremos help
-    verbose = args.get('-v',False) or args.get('--verbose',False) 
+                                                                        # el ultimo else evita un index error al correr searcher.py con una sola opcion sin argumentos
+    verbose = bool(args.get('-v',False) or args.get('--verbose',False))#guardamos el bool de  -v o --verbose en la variable verbose
     if verbose:print('[+] Verbose: All')
-    if not args.get('--languages',True) or not args.get('-l',True):printLanguages();return None
-    if args.get('--install',None)=='modules':installModules();return None
-    elif not args.get('-h',True) or not args.get('--help',True):help();return None
+    elif args=={}:help();return None #si no hay argumentos corremos help
+    if not args.get('--extensions',True):#si corremos -ext... mostramos un link con extensiones
+        if verbose:print('[>] visit: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains')
+        webbrowser.open('https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains');return None
+    elif not args.get('--languages',True) or not args.get('-l',True):printLanguages();return None#mostramos languages si --languages
+    elif args.get('--install',None)=='modules':installModules();return None#corremos la instalacion si --install
+    elif not args.get('-h',True) or not args.get('--help',True):help();return None#mostramos ayuda si -h
 
 
     #default args
@@ -195,15 +208,17 @@ def main():
     returns = None
     printit = False
     save = None
-    openNum = None
+    openNum = 5
     language = 'en'
     oib = False
-    view = False
+    openfile = False
+    multifile = False
+
 
 
     for option in args.keys():
         
-        if option in ['-w','--verbose','h','help','--install']:pass
+        if option in ['--verbose','-v']:pass
 
 
         elif option in ['-u','--url']:
@@ -216,9 +231,9 @@ def main():
             if verbose:print(f'[+] Args: {to_search}')
 
         
-        elif option in ['-d','--d']:
+        elif option in ['-e','--extension']:
             domain = args[option]
-            if verbose:print(f'[+] Domain: {url}')
+            if verbose:print(f'[+] Extension: .{url}')
 
 
         elif option in ['-r','--return']:
@@ -235,9 +250,14 @@ def main():
             save = args[option]
             if verbose:print(f'[+] Save into: {save}')
 
+        elif option in ['-sm','--savemultifile']:
+            save = args[option]
+            multifile = True
+            if verbose:print(f'[+] Save into: {save} (multifile)')
 
-        elif option in ['-o','--open']:
-            openNum = 5 if args[option] == '' else args[option]
+
+        elif option in ['-n','--numopen']:
+            openNum = int(args[option])
             if verbose:print(f'[+] Links open: {openNum}')
 
 
@@ -251,46 +271,71 @@ def main():
             if verbose:print(f'[+] Open in browser: {oib}')
 
 
-        elif option in ['-v','--view']:
-            view = args[option]
-            if verbose:print(f'[+] View file: {view}')
+        elif option in ['-o','--open']:
+            openfile = bool(args[option])
+            if verbose:print(f'[+] View file: {openfile}')
 
 
 
         else:#option doesnt match 
             if verbose:print(f'[-] Impossible to resolve {option}')
 
-    if url == 'google':
-        if verbose:print('[>] Searching via google...')
-        urls = googleSearch()# returns \n join(urls)
-        if printit:print(f'[+]urls: \n{urls}')
+    if url == 'google':#search via google
+        if verbose:print('[>] Searching via google... ',end='')#print status
+        urls = googleSearch()# returns \n join(urls)     call a google search
+
+        if printit:txt="\n".join(urls);print(f'[+]urls:\n{txt}')#printit 
         
-        if verbose:print('[+] All links found correctly')
-        to_return = []
+        if verbose:print('success')#status
+        to_return = []#create a list that contains the links or html code
 
-        if returns == 'link':to_return=urls.split('\n')
-        elif returns == 'html':to_return=[requests.get(a).text for a in urls.split('\n')]
-        else:print(f'[-] Impossible to resolve {returns}, run with "link" ')
-        if verbose:print('[+] Search is over')
+        if returns == 'link':to_return=urls#get the links returned by googleSearch
+        elif returns == 'html':
+            
+            for a in urls:
+                if verbose:print(f'[>] getting html ({a})... ',end='')
+                to_return.append(requests.get(a).text)#get the html of the links
+                if verbose:print('success')
+            
 
-        if save:
-            if verbose:print('[>] Saving in file...')
-            with open(f'{save}','wb') as f:
-                for a in to_return:
-                    f.write(bytearray(a+'\n','utf8'))
-            if verbose:print('[+] Saved correctly')
+        else:print(f'[-] Impossible to resolve {returns}, default "link" ')#status (error)
+        if save:#save into a file
+            if not multifile:
+                try:
+                    if verbose:print('[>] Saving in file... ',end='')#status
+                    with open(f'{save}','wb') as f:#open the file who wants to create 
+                        for a in to_return:
+                            f.write(bytearray(a+'\n','utf8'))#write the links or html into the file
+                    if verbose:print('success')#status
+                except Exception as e:
+                    print('Error')
+                    print(f'[-] Impossible to save into a file: {e}')#status (error)
+            else:
+                savename,saveext=save.split('.')
+                n=0
+                for r in to_return:
+                    n+=1
+                    try:
+                        if verbose:print(f'[>] Saving in file {n}... ',end='')#status
+                        with open(f'{savename}({n}).{saveext}','wb') as f:#open the file who wants to create 
+                            f.write(bytearray(r+'\n','utf8'))#write the links or html into the file
+                        if verbose:print('success')#status
+                    except Exception as e:
+                        print('error')
+                        print(f'[-] Impossible to save into a file: {e}')#status (error)
 
-        if oib:
-            for a in urls.split('\n'):webbrowser.open(a)
 
-        if view:openInBrowser(save)
+        if oib:#open in browser option, bool value
+            for a in urls:webbrowser.open(a)#open with webbrowser module
+
+        if openfile:openInBrowser(save) if not multifile else openInBrowser(save,openNum) #if use openfile option, call oib function who opens a file in browser
 
 
-    else: normalSearch()
+    else: normalSearch()#use directly requests, without a google search
+
             
 
 
 
 if __name__ == '__main__':
-    main()
-    print('\n\t\t\t\t\t\t\t\t\t\tThanks for use SEARCHER :)')
+    main()#run main module if searcher.py runs locally
