@@ -1,9 +1,14 @@
 #develop in python 3.10
 #import modules
+from sys import platform
+from tkinter import Text
+
+
 try:
     from typing import Literal
     import sys
     import os
+    import tkinter
 except:
     print('[e] Impossible to import python library modules')
     raise('[e] Try to restart.')
@@ -125,18 +130,13 @@ def printLanguages():
 #prints info (all)
 def help():
     print('''                                                                                                                               
-         d888888o.   8 8888888888            .8.          8 888888888o.      ,o888888o.    8 8888        8 8 8888888888   8 888888888o.   
-       .`8888:' `88. 8 8888                 .888.         8 8888    `88.    8888     `88.  8 8888        8 8 8888         8 8888    `88.  
-       8.`8888.   Y8 8 8888                :88888.        8 8888     `88 ,8 8888       `8. 8 8888        8 8 8888         8 8888     `88  
-       `8.`8888.     8 8888               . `88888.       8 8888     ,88 88 8888           8 8888        8 8 8888         8 8888     ,88  
-        `8.`8888.    8 888888888888      .8. `88888.      8 8888.   ,88' 88 8888           8 8888        8 8 888888888888 8 8888.   ,88'  
-         `8.`8888.   8 8888             .8`8. `88888.     8 888888888P'  88 8888           8 8888        8 8 8888         8 888888888P'   
-          `8.`8888.  8 8888            .8' `8. `88888.    8 8888`8b      88 8888           8 8888888888888 8 8888         8 8888`8b       
-      8b   `8.`8888. 8 8888           .8'   `8. `88888.   8 8888 `8b.    `8 8888       .8' 8 8888        8 8 8888         8 8888 `8b.     
-      `8b.  ;8.`8888 8 8888          .888888888. `88888.  8 8888   `8b.     8888     ,88'  8 8888        8 8 8888         8 8888   `8b.   
-       `Y8888P ,88P' 8 888888888888 .8'       `8. `88888. 8 8888     `88.    `8888888P'    8 8888        8 8 888888888888 8 8888     `88.   
-
-                                                                                                                        by Hugo Coto Flórez
+    
+                                 _               
+         ___  ___  __ _ _ __ ___| |__   ___ _ __ 
+        / __|/ _ \/ _` | '__/ __| '_ \ / _ \ '__|
+        \__ \  __/ (_| | | | (__| | | |  __/ |          v.1.1 (only tested in windows)
+        |___/\___|\__,_|_|  \___|_| |_|\___|_|   
+                                                by Hugo Coto Flórez
 
         Use:
             (searcher dir)...\\ python3(linux)/py(windows) searcher.py [options] [url] [get output]
@@ -158,7 +158,7 @@ def help():
             -l          --languages (language)      change the search language (".\ searcher.py --languages" -> see all languages) (default english)
 
         get output: 
-            -r h        --return html               returns a html copy of the file
+            -r h        --return html               returns a html copy of the file (default:link)
             -r l        --return link               returns the links of pages that contains the searched
             
             -s          --save (filename)           save the returned in a file. You can save it into a .txt (or .html if use -r h)
@@ -170,28 +170,31 @@ def help():
             -n (n)      --numopen (number)          open the specified number of links (default 5 in google link search)
             -b (T/1)    --browser                   open the links in browser
             -o          --open                      open that is saved into a file with the browser (need -s or -sm)
+            -f          --floating                  open that is saved in a floating window
 
-            
-   
+
         Useful Examples:
 
-            Google link search, open first 10 results in browser and save the links into a file
-                python3/py searcher.py -u g --query python-language -n 10 -r link -s searchlinks.txt -b 1
-
-            Copy the HTML who is in the first link page into a file and open it
-                python3/py searcher.py -u g --query hugo-coto -n 3 -r html -sm found_htmls.html -o 1
+        -open 3 links that contains the query
+            ...searcher.py -v -u g -q to-search -n 3 -b
+        -save 3 links that contains the query into a file and open it
+            ...searcher.py -v -u g -q to-search -n 3 -s filename.txt -o
+        -get the html of 3 pages that contains the query, save in diferent files and open it.
+            ...searcher.py -v -u g -q to-search -n 3 -r h -sm htmls.html -o
                                             
 
             
-
-        ~For install all the modules that SEARCHER need you can run .\ python3/py searcher.py --install modules
+        ~For clear all the folder you can run ... searcher.py --clear
+        ~For install all the modules that SEARCHER need you can run ... searcher.py --install modules
 
     ''')
 #main isnt loop
 def main():
     global verbose
     args = separateArgs(sys.argv[1:])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
-    verbose = not all(args['-v',True],args['--verbose',True])#guardamos el bool de  -v o --verbose en la variable verbose
+    verbose = not all([args.get('-v',True),args.get('--verbose',True)])#guardamos el bool de  -v o --verbose en la variable verbose
+    global osystem;osystem = sys.platform
+    if verbose:print(f'[+] Run on: {osystem}')
     if verbose:print('[+] Verbose: All')
     elif args=={}:help();return None #si no hay argumentos corremos help
     if not args.get('--extensions',True):#si corremos -ext... mostramos un link con extensiones
@@ -200,7 +203,11 @@ def main():
     elif not args.get('--languages',True) or not args.get('-l',True):printLanguages();return None#mostramos languages si --languages
     elif args.get('--install',None)=='modules':installModules();return None#corremos la instalacion si --install
     elif not args.get('-h',True) or not args.get('--help',True):help();return None#mostramos ayuda si -h
-
+    if not args.get('--clear',True):
+        for file in os.listdir(os.getcwd()):
+            try:print(f'[+] Delete dir ({file}) ... ',end='');os.remove(f'{os.getcwd()}\\{file}') if not file in ['README.md','searcher.py'] else print('deny')
+            except Exception as e:print('error')
+            else:print('success')
 
     #default args
     global domain,to_search,url,returns,printit,save,openNum,language,oib
@@ -215,10 +222,11 @@ def main():
     oib = False
     openfile = False
     multifile = False
+    floatingWindow=False
 
 
 
-    for option in args.keys():
+    for option in args.keys():#set args 
         
         if option in ['--verbose','-v']:pass
 
@@ -251,6 +259,7 @@ def main():
         elif option in ['-s','--save']:
             save = args[option]
             if verbose:print(f'[+] Save into: {save}')
+            if not save:print('[e] Filename is empty, impossible to write in it')
 
         elif option in ['-sm','--savemultifile']:
             save = args[option]
@@ -277,6 +286,10 @@ def main():
             openfile = True
             if verbose:print('[+] View file: True')
 
+        elif option in ['-f','--floating']:
+            floatingWindow = True
+            if verbose:print('[+] Float: True')
+
 
 
         else:#option doesnt match 
@@ -285,19 +298,20 @@ def main():
     if url == 'google':#search via google
         if verbose:print('[>] Searching via google... ',end='')#print status
         urls = googleSearch()# returns \n join(urls)     call a google search
-
-        if printit:txt="\n".join(urls);print(f'[+]urls:\n{txt}')#printit 
-        
-        if verbose:print('success')#status
         to_return = []#create a list that contains the links or html code
-
+        if printit:txt="\n".join(urls);print(f'[+]urls:\n{txt}')#printit 
+        if verbose:print('success')#status
         if returns == 'link':to_return=urls#get the links returned by googleSearch
         elif returns == 'html':
-            
             for a in urls:
                 if verbose:print(f'[>] getting html ({a})... ',end='')
-                to_return.append(requests.get(a).text)#get the html of the links
-                if verbose:print('success')
+                try:
+                    to_return.append(requests.get(a).text)#get the html of the links
+                    if verbose:print('success')
+                except Exception as e:
+                    print('error')
+                    print(f'[e] >> {e}')
+                
             
 
         else:print(f'[-] Impossible to resolve {returns}, default "link" ')#status (error)
@@ -331,7 +345,11 @@ def main():
             for a in urls:webbrowser.open(a)#open with webbrowser module
 
         if openfile:openInBrowser(save) if not multifile else openInBrowser(save,openNum) #if use openfile option, call oib function who opens a file in browser
-
+        if floatingWindow:
+            w = tkinter.Tk()
+            for r in to_return:
+                tkinter.Label(text=r).pack()
+            w.mainloop()  
 
     else: normalSearch()#use directly requests, without a google search
 
@@ -341,3 +359,4 @@ def main():
 
 if __name__ == '__main__':
     main()#run main module if searcher.py runs locally
+    
