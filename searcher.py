@@ -5,15 +5,17 @@ try:
     import sys
     import os
 except:
-    print('Impossible to import python library modules')
-    raise('Try to restart.')
+    print('[e] Impossible to import python library modules')
+    raise('[e] Try to restart.')
 try:
     from googlesearch import search
     import requests
     import webbrowser
     import bs4
 except:
-    print('External module import error. For install all the modules run: ')
+    print('''[e] External module import error. 
+[>] For install all the modules run: 
+\t...searcher.py --install modules''')
 
 #function that should install all required modules
 def installModules():
