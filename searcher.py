@@ -191,7 +191,7 @@ def help():
 def main():
     global verbose
     args = separateArgs(sys.argv[1:])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
-    verbose = True if not args.get('--verbose',True) or args.get('-v',True) else False#guardamos el bool de  -v o --verbose en la variable verbose
+    verbose = not all(args['-v',True],args['--verbose',True])#guardamos el bool de  -v o --verbose en la variable verbose
     if verbose:print('[+] Verbose: All')
     elif args=={}:help();return None #si no hay argumentos corremos help
     if not args.get('--extensions',True):#si corremos -ext... mostramos un link con extensiones
