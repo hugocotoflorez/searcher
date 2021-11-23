@@ -33,6 +33,7 @@ def installModules():
             print(f'Impossible to install {module}: {e}')
 #returns the args and their values like a dict
 def separateArgs(a):
+    a.append('')
     return({a[d]:('' if a[d+1].startswith('-') else a[d+1]) for d in range(len(a)) if a[d].startswith('-')})
 #make a google search with the google module
 def googleSearch()->Literal["list of urls"]:
@@ -189,8 +190,7 @@ def help():
 #main isnt loop
 def main():
     global verbose
-    args = separateArgs(sys.argv[1:] if len(sys.argv)>2 else sys.argv[1:]+[''])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
-                                                                        # el ultimo else evita un index error al correr searcher.py con una sola opcion sin argumentos
+    args = separateArgs(sys.argv[1:])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
     verbose = True if not args.get('--verbose',True) or args.get('-v',True) else False#guardamos el bool de  -v o --verbose en la variable verbose
     if verbose:print('[+] Verbose: All')
     elif args=={}:help();return None #si no hay argumentos corremos help
