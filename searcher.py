@@ -144,14 +144,14 @@ def help():
             short       large                     use to:
 
             -h          --help                      get this info:
-            -v T/F      --verbose True/False/1/0    decide if prints info in console (it should be in first position)
+            -v          --verbose                   decide if prints info in console (it should be in first position)
             _           --project                   open in browser searcher.py github repository and prints the link in consola
 
         url:
             -u          --url (url)                 especifique url for the search (DISABLED for now...) 
             -u g        --url google                search via google
 
-            -q          --query(s)                  word or words separeted by "," , "+" or "-" [never space!] (default:ask)
+            -q          --query                     word or words separeted by "," , "+" or "-" [never space!] (default:ask)
             -e          --extension                 extension to search, without "." (".\ searcher.py --extensions" -> see all extensoions) (default .com) 
 
             -l          --languages (language)      change the search language (".\ searcher.py --languages" -> see all languages) (default english)
@@ -164,10 +164,10 @@ def help():
             -sm        --savemultifile (filename)   save each result in a diferent file, whose name is (miltifile)(1-...).extension.It is useful for html search 
             
 
-            -p          --print (bool)              prints the returned in consola
+            -p          --print                     prints the returned in consola
              
             -n (n)      --numopen (number)          open the specified number of links (default 5 in google link search)
-            -b (T/1)    --browser (True/1)          open the links in browser
+            -b (T/1)    --browser                   open the links in browser
             -o          --open                      open that is saved into a file with the browser (need -s or -sm)
 
             
@@ -191,7 +191,7 @@ def main():
     global verbose
     args = separateArgs(sys.argv[1:] if len(sys.argv)>2 else sys.argv[1:]+[''])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
                                                                         # el ultimo else evita un index error al correr searcher.py con una sola opcion sin argumentos
-    verbose = bool(args.get('-v',False) or args.get('--verbose',False))#guardamos el bool de  -v o --verbose en la variable verbose
+    verbose = True if not args.get('--verbose',True) or args.get('-v',True) else False#guardamos el bool de  -v o --verbose en la variable verbose
     if verbose:print('[+] Verbose: All')
     elif args=={}:help();return None #si no hay argumentos corremos help
     if not args.get('--extensions',True):#si corremos -ext... mostramos un link con extensiones
@@ -207,7 +207,7 @@ def main():
     domain = 'com'
     to_search = ''
     url = None
-    returns = None
+    returns = 'link'
     printit = False
     save = None
     openNum = 5
@@ -244,8 +244,8 @@ def main():
 
 
         elif option in ['-p','--print']:
-            printit = bool(args[option])
-            if verbose:print(f'[+] Print: {"All" if printit else "None"}')
+            printit = True
+            if verbose:print('[+] Print: All')
 
 
         elif option in ['-s','--save']:
@@ -269,13 +269,13 @@ def main():
 
 
         elif option in ['-b','--browser']:
-            oib = bool(args[option])
-            if verbose:print(f'[+] Open in browser: {oib}')
+            oib = True
+            if verbose:print('[+] Open in browser: All')
 
 
         elif option in ['-o','--open']:
-            openfile = bool(args[option])
-            if verbose:print(f'[+] View file: {openfile}')
+            openfile = True
+            if verbose:print('[+] View file: True')
 
 
 
