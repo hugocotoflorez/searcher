@@ -5,7 +5,6 @@ try:
     import sys
     from sys import platform
     import os
-    import tkinter
 except:
     print('[e] Impossible to import python library modules')
     raise('[e] Try to restart.')
@@ -167,7 +166,7 @@ def help():
             -n (n)      --numopen (number)          open the specified number of links (default 5 in google link search)
             -b (T/1)    --browser                   open the links in browser
             -o          --open                      open that is saved into a file with the browser (need -s or -sm)
-            -f          --floating                  open that is saved in a floating window
+           
 
 
         Useful Examples:
@@ -219,7 +218,7 @@ def main():
     oib = False
     openfile = False
     multifile = False
-    floatingWindow=False
+   
 
 
 
@@ -283,9 +282,9 @@ def main():
             openfile = True
             if verbose:print('[+] View file: True')
 
-        elif option in ['-f','--floating']:
-            floatingWindow = True
-            if verbose:print('[+] Float: True')
+     
+          
+           
 
 
 
@@ -342,11 +341,11 @@ def main():
             for a in urls:webbrowser.open(a)#open with webbrowser module
 
         if openfile:openInBrowser(save) if not multifile else openInBrowser(save,openNum) #if use openfile option, call oib function who opens a file in browser
-        if floatingWindow:
-            w = tkinter.Tk()
-            for r in to_return:
-                tkinter.Label(text=r).pack()
-            w.mainloop()  
+     
+         
+         
+              
+          
 
     else: normalSearch()#use directly requests, without a google search
 
