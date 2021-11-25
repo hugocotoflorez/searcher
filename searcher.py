@@ -1,12 +1,9 @@
 #develop in python 3.10
 #import modules
-from sys import platform
-from tkinter import Text
-
-
 try:
     from typing import Literal
     import sys
+    from sys importplatform
     import os
     import tkinter
 except:
