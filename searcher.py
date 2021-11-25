@@ -3,7 +3,7 @@
 try:
     from typing import Literal
     import sys
-    from sys importplatform
+    from sys import platform
     import os
     import tkinter
 except:
