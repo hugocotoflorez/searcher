@@ -38,7 +38,7 @@ def update():
     try:        
         try:os.remove(os.getcwd()+'\\searcher_instaler.py')
         except:pass
-        seq=['import os','from subprocess import Popen','os.rmdir(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
+        seq=['import os','from subprocess import Popen','os.remove(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
         with open('searcher_instaler.py','w') as f:
             [f.write(f'{a}\n') for a in seq]
     except Exception as e:
