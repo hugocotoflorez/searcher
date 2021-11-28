@@ -37,10 +37,10 @@ def update():
     if not input('You are going to lose all the files in ./searcher, are you sure you want to continue? (empty to return)'):return None
     print('[>] Updating searcher...')
     try:
-        Popen(['cd','..'],shell=verbose)
-        Popen(['rm','-rf','searcher'],shell=verbose)
-        Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)
-        Popen(['cd','searcher'],shell=verbose)
+        os.chdir('\\'.join(os.getcwd().split('\\')[:-1]))
+        seq=['os.rmdir(os.getcwd())',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
+        with open('searcher_updater.py','w') as f:
+            [f.write(a) for a in seq]
     except Exception as e:
         if verbose:print('error')
         print(f'[e] unexpected error: {e}')
@@ -308,8 +308,11 @@ def main():
     if not args.get('--clear',True):#limpiamos dir
         for file in os.listdir(os.getcwd()):
             try:
-                print(f'[+] Delete dir ({file}) ... ',end='');
-                if not file in ['README.md','searcher.py']:os.remove(f'{os.getcwd()}\\{file}');print('success') if not file in ['README.md','searcher.py'] else print('deny')
+                print(f'[+] Delete dir ({file}) ... ',end='')
+                if not file in ['README.md','searcher.py']:
+                    os.remove(f'{os.getcwd()}\\{file}')
+                    print('success')
+                else: print('deny')
             except Exception as e:print('error')
 
 
