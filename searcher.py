@@ -15,7 +15,8 @@ try:
     import bs4
 except:
     print('''[e] External module import error. 
-[>] For install all the modules run: \...searcher.py --install modules''')
+[>] For install all the modules run: 
+\t...searcher.py --install modules''')
 
 #default global args
  
@@ -33,12 +34,11 @@ openfile = False
 multifile = False
 
 def update():
-    if not input('You are going to lose all the files in ./searcher, are you sure you want to continue? (Y/n): ') in ['y','Y','YES','yes']:return None
-    print('[>] Updating searcher...')
+    print('[>] Creating updater ...')
     try:        
         try:os.remove(os.getcwd()+'\\searcher_instaler.py')
         except:pass
-        seq=['import os','from subprocess import Popen','os.rmdir(os.getcwd())',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
+        seq=['import os','from subprocess import Popen','os.rmdir(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
         with open('searcher_instaler.py','w') as f:
             [f.write(f'{a}\n') for a in seq]
     except Exception as e:
@@ -424,8 +424,13 @@ def main():
             for a in urls:webbrowser.open(a)#open with webbrowser module
 
         if openfile:openInBrowser(save) if not multifile else openInBrowser(save,openNum) #if use openfile option, call oib function who opens a file in browser
+     
+         
 
     else: normalSearch()#use directly requests, without a google search
+
+            
+
 
 
 if __name__ == '__main__':
