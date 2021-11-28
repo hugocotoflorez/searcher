@@ -33,12 +33,23 @@ oib = False
 openfile = False
 multifile = False
 
+def clear():
+    for file in os.listdir(os.getcwd()):
+        try:
+            print(f'[+] Delete dir ({file}) ... ',end='')
+            if not file in ['README.md','searcher.py']:
+                os.remove(f'{os.getcwd()}\\{file}')
+                print('success')
+            else: print('deny')
+        except Exception as e:print('error')
+
 def update():
-    print('[>] Creating updater ...')
+    clear()
+    print('[>] Creating updater ...',end='')
     try:        
         try:os.remove(os.getcwd()+'\\searcher_instaler.py')
         except:pass
-        seq=['import os','from subprocess import Popen','os.remove(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'])","Popen(['cd','searcher'])"]
+        seq=['import os','from subprocess import Popen','os.remove(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'])"]
         with open('searcher_instaler.py','w') as f:
             [f.write(f'{a}\n') for a in seq]
     except Exception as e:
@@ -306,15 +317,8 @@ def main():
     elif args.get('--install',None)=='modules':installModules();return None#corremos la instalacion si --install
     elif not args.get('--update',True):update()
     elif not args.get('-h',True) or not args.get('--help',True):help();return None#mostramos ayuda si -h
-    if not args.get('--clear',True):#limpiamos dir
-        for file in os.listdir(os.getcwd()):
-            try:
-                print(f'[+] Delete dir ({file}) ... ',end='')
-                if not file in ['README.md','searcher.py']:
-                    os.remove(f'{os.getcwd()}\\{file}')
-                    print('success')
-                else: print('deny')
-            except Exception as e:print('error')
+    if not args.get('--clear',True):clear()#limpiamos dir
+        
 
 
    
