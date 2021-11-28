@@ -4,6 +4,7 @@ try:
     from typing import Literal
     import sys
     import os
+    from subprocess import Popen
 except:
     print('[e] Impossible to import python library modules')
     raise('[e] Try to restart.')
@@ -36,10 +37,10 @@ def update():
     if not input('You are going to lose all the files in ./searcher, are you sure you want to continue? (empty to return)'):return None
     print('[>] Updating searcher...')
     try:
-        os.popen(['cd','..'],shell=verbose)
-        os.popen(['rm','-rf','searcher'],shell=verbose)
-        os.popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)
-        os.popen(['cd','searcher'],shell=verbose)
+        Popen(['cd','..'],shell=verbose)
+        Popen(['rm','-rf','searcher'],shell=verbose)
+        Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)
+        Popen(['cd','searcher'],shell=verbose)
     except Exception as e:
         if verbose:print('error')
         print(f'[e] unexpected error: {e}')
