@@ -38,14 +38,15 @@ def update():
     try:        
         try:os.remove(os.getcwd()+'\\searcher_instaler.py')
         except:pass
-        seq=['import os','from subprocess import Popen','os.remove(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)","Popen(['cd','searcher'],shell=verbose)"]
+        seq=['import os','from subprocess import Popen','os.remove(os.getcwd()+"\\searcher.py")',"Popen(['git','clone','https://github.com/hugoocf/searcher.git'])","Popen(['cd','searcher'])"]
         with open('searcher_instaler.py','w') as f:
             [f.write(f'{a}\n') for a in seq]
     except Exception as e:
-        if verbose:print('error')
+        print('error')
         print(f'[e] unexpected error: {e}')
     else:
-        print('[+] searcher updates successful')
+        print('success')
+        print('[>] Run \\searcher_installer.py for comlpete update')
     
 #function that should install all required modules
 def installModules():
