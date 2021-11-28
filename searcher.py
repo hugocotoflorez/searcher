@@ -52,7 +52,7 @@ def update():
         try:os.remove(os.getcwd()+'\\searcher_instaler.py')
         except:pass
         with open('searcher_instaler.py','w') as f:
-            f.write('import os;from subprocess import Popen;;os.chdir("\\\\".join(os.getcwd().split("\\\\")[:-1]));os.rmdir(os.getcwd()+\\\\"searcher");os.remove(os.getcwd()+"\\searcher.py");Popen(["git","clone","https://github.com/hugoocf/searcher.git"])')
+            f.write('import shutil;import os;from subprocess import Popen;os.chdir("\\\\".join(os.getcwd().split("\\\\")[:-1]));shutil.rmtree(os.getcwd()+"\\\\searcher",ignore_errors=True);Popen(["git","clone","https://github.com/hugoocf/searcher.git"])')
     except Exception as e:
         print('error')
         print(f'[e] unexpected error: {e}')
