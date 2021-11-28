@@ -32,6 +32,20 @@ oib = False
 openfile = False
 multifile = False
 
+def update():
+    if not input('You are going to lose all the files in ./searcher, are you sure you want to continue? (empty to return)'):return None
+    print('[>] Updating searcher...')
+    try:
+        os.popen(['cd','..'],shell=verbose)
+        os.popen(['rm','-rf','searcher'],shell=verbose)
+        os.popen(['git','clone','https://github.com/hugoocf/searcher.git'],shell=verbose)
+        os.popen(['cd','searcher'],shell=verbose)
+    except Exception as e:
+        if verbose:print('error')
+        print(f'[e] unexpected error: {e}')
+    else:
+        print('[+] searcher updates successful')
+    
 #function that should install all required modules
 def installModules():
     moduleList=[
@@ -276,11 +290,8 @@ def main():
     global domain,to_search,url,returns,save,openNum,language,oib,openfile,multifile,printit
     args = separateArgs(sys.argv[1:])# cogemos los parametros introducidos despues de la ruta del script y los separamos 
     if not args.get('--gui',True):
-        print('[>] Open GUI...',end='')
-        try:GUI()
+        try:print('[>] Open GUI...',end='');GUI()
         except Exception as e:print('error')
-
-
     verbose = not all([args.get('-v',True),args.get('--verbose',True)])#guardamos el bool de  -v o --verbose en la variable verbose
     global osystem;osystem = sys.platform
     if verbose:print(f'[+] Run on: {osystem}')
@@ -291,6 +302,7 @@ def main():
         webbrowser.open('https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains');return None
     elif not args.get('--languages',True) or not args.get('-l',True):printLanguages();return None#mostramos languages si --languages
     elif args.get('--install',None)=='modules':installModules();return None#corremos la instalacion si --install
+    elif not args.get('--update',True):update()
     elif not args.get('-h',True) or not args.get('--help',True):help();return None#mostramos ayuda si -h
     if not args.get('--clear',True):#limpiamos dir
         for file in os.listdir(os.getcwd()):
