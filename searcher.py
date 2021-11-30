@@ -34,27 +34,15 @@ openfile = False
 multifile = False
 
 def clear():
-    
     for file in os.listdir(os.getcwd()):
         try:
-            print(f'[+] Delete dir ({file}) ... ',end='')
+            print(f'[+] Delete dir => /{file} {"."*(20-len(file)) if len(file) <= 20 else "..."} ',end='')
             if not file in ['README.md','searcher.py']:
                 os.remove(f'{os.getcwd()}\\{file}')
                 print('success')
             else: print('deny')
         except Exception as e:print('error')
-
-def update():
-    clear()
-    print('[>] Creating updater ...',end='')
-    try:   
-        Popen(["git","pull","https://github.com/hugoocf/searcher.git"],shell=False)
-    except Exception as e:
-        print('error')
-        print(f'[-] {e}') 
-    else:
-        print('success')
-    
+   
 #function that should install all required modules
 def installModules():
     moduleList=[
@@ -88,8 +76,9 @@ def openInBrowser(filename,n=False):
     s = 'file:///'
     path = os.getcwd()
     if n:
+        print('n',n)
         filename,filenameext=filename.split('.')
-        for l in range(n):
+        for l in range(int(n)):
             a = s+(f'{path}/{filename}({l+1}).{filenameext}').replace('\\','/')
             webbrowser.open(a)
     else:
@@ -100,19 +89,18 @@ def openInBrowser(filename,n=False):
 def GUI():
     print('success')
     global verbose
-    verbose=1
     try:
-        if verbose:print('[>] importing tkinter... ',end='')
+        print('[>] importing tkinter... ',end='')
         import tkinter as tk
         from tkinter import IntVar, StringVar
-    except ModuleNotFoundError or ImportError:
-        if verbose:print('error')
-        print('[e] error at importing tkinter')
+    except Exception as e:
+        print('error')
+        print(f'[e] error: {e}')
     else:
-        if verbose:print('success')
+        print('success')
+        print('[>] run GUI ... ',end='')
         try:
             def dest():w.destroy()
-            if verbose:print('[>] run GUI ... ',end='')
             w = tk.Tk()
             e=StringVar();u=StringVar();q=StringVar();n=StringVar();r=StringVar();l=StringVar();fn=StringVar()
             verbose = IntVar();saved = IntVar();multifiles = IntVar();openbrowser = IntVar();opensaved = IntVar()
@@ -141,6 +129,7 @@ def GUI():
             tk.Label(frame11,text='number to open').pack();numentry = tk.Entry(frame11,textvariable=n);numentry.insert(0,string='5');numentry.pack()
             tk.Button(frame12,text='Done',command=dest).pack()
             w.mainloop()
+            print('success')
             verbose = verbose.get()
             varv={
                 'url':u.get(),
@@ -148,7 +137,7 @@ def GUI():
                 'extension':e.get(),
                 'language':l.get(),
                 'returns':'html' if r.get()=='html' else 'links',
-                'save':fn.get() if saved.get() else None,
+                'save':fn.get() if saved.get() or multifiles.get() else None,
                 'multifile':bool(multifiles.get()),
                 'browser':bool(openbrowser.get()),
                 'opensaved':bool(opensaved.get()),
@@ -166,11 +155,11 @@ def GUI():
             multifile = varv['multifile']
             p='\n'.join(f"[+] {a}: {varv[a]}" for a in varv.keys() if varv[a])
             if verbose:w=tk.Tk();tk.Label(text=p).pack();tk.Button(w,text='Done',command=dest).pack();w.mainloop()
+            
         except Exception as e:
-            if verbose:print('error')
+            print('error')
             print('[e] unexpected error:',e)
-        else:
-            if verbose:print('success')
+
 #prints info (languages)
 def printLanguages():
     print(
@@ -311,7 +300,6 @@ def main():
         webbrowser.open('https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains');return None
     elif not args.get('--languages',True) or not args.get('-l',True):printLanguages();return None#mostramos languages si --languages
     elif args.get('--install',None)=='modules':installModules();return None#corremos la instalacion si --install
-    elif not args.get('--update',True):update()
     elif not args.get('-h',True) or not args.get('--help',True):help();return None#mostramos ayuda si -h
     if not args.get('--clear',True):clear()#limpiamos dir
         
